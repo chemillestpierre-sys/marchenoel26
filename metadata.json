@@ -1,0 +1,8 @@
+{
+  "name": "Bénévoles Marché de Noël — École Saint-Pierre",
+  "description": "Plateforme d'inscription sécurisée des parents bénévoles pour le Marché de Noël de l'École Saint-Pierre (vendredi 4 décembre), avec confirmation par e-mail, rappel automatique J-3 et programme des repas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
