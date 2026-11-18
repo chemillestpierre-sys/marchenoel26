@@ -345,6 +345,12 @@ export function OrganizerView({
         </div>
       </div>
 
+      {settings?.databaseMode === 'ephemeral_tmp' && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-950 leading-relaxed">
+          <strong>Stockage temporaire détecté sur Vercel :</strong> aucune base PostgreSQL (<code className="font-mono">DATABASE_URL</code> ou <code className="font-mono">POSTGRES_URL</code>) n’est encore connectée. Ajoutez une base gratuite Neon / Supabase / Vercel Postgres dans l’onglet <em>Storage</em> de votre projet Vercel pour conserver les inscriptions durablement.
+        </div>
+      )}
+
       {feedback && (
         <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950">
           {feedback}

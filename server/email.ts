@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
-import { db } from './db.ts';
+import { insertEmailLog } from './db';
 
 export function isSmtpConfigured(): boolean {
   return Boolean(
@@ -38,6 +38,12 @@ export function getAppBaseUrl(reqOrigin?: string): string {
   }
   if (reqOrigin) {
     return reqOrigin.replace(/\/$/, '');
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
   }
   return 'http://localhost:3000';
 }
@@ -102,7 +108,7 @@ export async function dispatchEmail(params: {
   const now = new Date().toISOString();
   const transporter = getTransporter();
 
-  let deliveryMode: 'smtp' | 'preview' = transporter ? 'smtp' : 'preview';
+  const deliveryMode: 'smtp' | 'preview' = transporter ? 'smtp' : 'preview';
   let status: 'sent' | 'failed' = 'sent';
   let errorMessage: string | null = null;
 
@@ -122,25 +128,20 @@ export async function dispatchEmail(params: {
     }
   }
 
-  db.prepare(`
-    INSERT INTO email_logs (
-      id, registration_id, recipient_email, recipient_name, email_type,
-      subject, html_body, text_body, delivery_mode, status, error_message, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
+  await insertEmailLog({
     id,
-    params.registrationId ?? null,
-    params.recipientEmail,
-    params.recipientName,
-    params.emailType,
-    params.subject,
-    params.htmlBody,
-    params.textBody,
+    registrationId: params.registrationId ?? null,
+    recipientEmail: params.recipientEmail,
+    recipientName: params.recipientName,
+    emailType: params.emailType,
+    subject: params.subject,
+    htmlBody: params.htmlBody,
+    textBody: params.textBody,
     deliveryMode,
     status,
     errorMessage,
-    now
-  );
+    createdAt: now,
+  });
 
   return { id, deliveryMode, status, errorMessage };
 }

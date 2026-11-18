@@ -43,6 +43,7 @@ export interface AppSettings {
   replyDeadlineCantine: string;
   mealOrderDeadline: string;
   smtpConfigured: boolean;
+  databaseMode?: 'postgres' | 'local_file' | 'ephemeral_tmp';
 }
 
 export interface EmailPreview {
